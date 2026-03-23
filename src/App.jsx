@@ -100,7 +100,7 @@ export default function App() {
       >
         <div className="max-w-2xl">
           <h1
-            className="text-5xl md:text-6xl font-black tracking-tight mb-3"
+            className="text-5xl md:text-6xl font-black tracking-tight mb-0"
             style={{
               background: 'linear-gradient(135deg, #fff 30%, #a78bfa 100%)',
               WebkitBackgroundClip: 'text',
@@ -109,14 +109,6 @@ export default function App() {
           >
             AlterMundi
           </h1>
-          <p className="text-base md:text-lg text-white/60 font-light leading-relaxed">
-            Empezamos construyendo redes abiertas.<br />
-            Hoy estamos construyendo una infraestructura distribuida<br className="hidden md:block" />
-            para percibir, organizar e interpretar la información como relación.
-          </p>
-          <p className="text-xs text-white/25 mt-4 tracking-wider">
-            De la mesh a los ratios · De conectar dispositivos a interpretar relaciones
-          </p>
         </div>
       </div>
 
