@@ -1,24 +1,270 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&family=Special+Elite&display=swap');
 @import "tailwindcss";
 
-@theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+.font-sketch {
+  font-family: 'Special Elite', 'Courier New', Courier, monospace;
 }
 
-* {
+/* ─── Design tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --bg: #060d1f;
+  --surface: #0d1535;
+  --text: #e2e8f8;
+  --primary: #00e5a0;
+  --secondary: #a78bfa;
+  --accent-warm: #fbbf24;
+  --accent-light: rgba(167, 139, 250, 0.12);
+}
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, monospace;
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body,
 html {
   margin: 0;
   padding: 0;
-  overflow: hidden;
-  background: #060810;
-  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
+/* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(91, 75, 168, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(91, 75, 168, 0.4);
+}
+
+/* ─── Mesh animated background ───────────────────────────────────────────────── */
+.mesh-bg {
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.mesh-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 30%, rgba(91, 75, 168, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 80% 60%, rgba(0, 168, 107, 0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 50% 80%, rgba(217, 119, 6, 0.03) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Section content layer ──────────────────────────────────────────────────── */
+.section-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Phi-card (organic border-radius, morphs on hover) ─────────────────────── */
+.phi-card {
+  border-radius: 38.2% 8% 38.2% 8% / 8% 38.2% 8% 38.2%;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.phi-card:hover {
+  border-radius: 8% 38.2% 8% 38.2% / 38.2% 8% 38.2% 8%;
+  transform: scale(1.03);
+}
+
+/* ─── Organic blob ───────────────────────────────────────────────────────────── */
+.organic-blob {
+  border-radius: 61.8% 38.2% 50% 50% / 38.2% 61.8% 38.2% 61.8%;
+  animation: morphBlob 8s ease-in-out infinite alternate;
+}
+
+@keyframes morphBlob {
+  0% {
+    border-radius: 61.8% 38.2% 50% 50% / 38.2% 61.8% 38.2% 61.8%;
+  }
+
+  33% {
+    border-radius: 38.2% 61.8% 38.2% 61.8% / 50% 38.2% 61.8% 38.2%;
+  }
+
+  66% {
+    border-radius: 50% 38.2% 61.8% 38.2% / 61.8% 50% 38.2% 61.8%;
+  }
+
+  100% {
+    border-radius: 38.2% 50% 38.2% 61.8% / 38.2% 61.8% 50% 38.2%;
+  }
+}
+
+/* ─── Golden spiral rotation ─────────────────────────────────────────────────── */
+.golden-spiral {
+  animation: rotateSlow 30s linear infinite;
+}
+
+@keyframes rotateSlow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ─── Nav links ──────────────────────────────────────────────────────────────── */
+.nav-link {
+  position: relative;
+  padding: 0.5rem 0.75rem;
+  color: rgba(226, 232, 248, 0.75);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 999px;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+  width: 80%;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+}
+
+/* ─── Wave divider ───────────────────────────────────────────────────────────── */
+.wave-divider {
+  width: 100%;
+  height: 80px;
+  overflow: hidden;
+}
+
+.wave-divider svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ─── Scroll reveal ──────────────────────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Blog cards ─────────────────────────────────────────────────────────────── */
+.blog-card {
+  border-radius: 24px 8px 24px 8px;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+}
+
+.blog-card:hover {
+  border-radius: 8px 24px 8px 24px;
+  transform: translateY(-8px);
+}
+
+/* ─── Honeycomb cells ────────────────────────────────────────────────────────── */
+.honey-cell {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+}
+
+.honey-cell:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.view-transition {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Team bubbles ───────────────────────────────────────────────────────────── */
+.team-bubble {
+  border-radius: 50%;
+  transition: all 0.4s;
+}
+
+.team-bubble:hover {
+  border-radius: 38.2% 61.8% 50% 50% / 61.8% 38.2% 61.8% 38.2%;
+  transform: scale(1.08);
+}
+
+/* ─── Mobile menu ────────────────────────────────────────────────────────────── */
+.mobile-menu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mobile-menu.open {
+  max-height: 500px;
+}
+
+/* ─── Pulse dot ──────────────────────────────────────────────────────────────── */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+}
+
+/* ─── Twinkle (kept for compatibility) ──────────────────────────────────────── */
 @keyframes twinkle {
 
   0%,
@@ -33,19 +279,9 @@ html {
   }
 }
 
-::-webkit-scrollbar {
-  width: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+/* ─── Focus ring ─────────────────────────────────────────────────────────────── */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }

@@ -1,141 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import MeshGraph from './components/MeshGraph';
-import DetailPanel from './components/DetailPanel';
-import { initialData, CATEGORIES } from './data';
+import React, { useEffect, useState } from 'react';
+import Nav from './components/Nav';
+import InicioView from './views/InicioView';
+import NosotrosView from './views/NosotrosView';
+import DigitalView from './views/DigitalView';
+import IAView from './views/IAView';
+import HITView from './views/HITView';
+import BlogView from './views/BlogView';
+import ContactoView from './views/ContactoView';
 import './index.css';
 
-function Starfield() {
-  return (
-    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-      {Array.from({ length: 120 }).map((_, i) => {
-        const size = Math.random() * 2 + 0.5;
-        const delay = Math.random() * 8;
-        const duration = 4 + Math.random() * 8;
-        return (
-          <div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: size,
-              height: size,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              background: `rgba(255,255,255,${0.1 + Math.random() * 0.4})`,
-              animation: `twinkle ${duration}s ${delay}s ease-in-out infinite`,
-            }}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
-function CategoryLegend() {
-  return (
-    <div
-      className="absolute bottom-6 left-6 z-20 rounded-2xl p-4 hidden md:block"
-      style={{ background: 'rgba(10,12,22,0.85)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.08)' }}
-    >
-      <p className="text-xs uppercase tracking-widest text-white/30 mb-3">Áreas</p>
-      <div className="space-y-2">
-        {Object.entries(CATEGORIES).map(([key, cat]) => (
-          <div key={key} className="flex items-center gap-2.5">
-            <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: cat.color, boxShadow: `0 0 6px ${cat.color}` }} />
-            <span className="text-xs text-white/55">{cat.label}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function HintBadge({ visible }) {
-  return (
-    <div
-      className="absolute bottom-6 right-6 z-20 flex items-center gap-2 px-4 py-2 rounded-full transition-opacity duration-700"
-      style={{
-        background: 'rgba(10,12,22,0.85)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        opacity: visible ? 1 : 0,
-      }}
-    >
-      <div className="w-2 h-2 rounded-full animate-pulse bg-violet-400" />
-      <span className="text-xs text-white/50">Hacé click en un nodo para explorar</span>
-    </div>
-  );
+// Custom hook to trigger fade-in animations when tab changes
+function useReveal(dependency) {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.1 }
+    );
+    const t = setTimeout(() => {
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    }, 100);
+    return () => { clearTimeout(t); observer.disconnect(); };
+  }, [dependency]);
 }
 
 export default function App() {
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [activeTab, setActiveTab] = useState('inicio');
   const [showHint, setShowHint] = useState(true);
+
+  useReveal(activeTab);
 
   useEffect(() => {
     const t = setTimeout(() => setShowHint(false), 5000);
     return () => clearTimeout(t);
   }, []);
 
-  const handleNodeClick = (node) => {
-    setSelectedNode(node);
-    if (node) setShowHint(false);
+  const renderView = () => {
+    switch (activeTab) {
+      case 'inicio': return <InicioView showHint={showHint} />;
+      case 'nosotros': return <NosotrosView />;
+      case 'tecnologia': return <DigitalView />;
+      case 'ia': return <IAView />;
+      case 'hit': return <HITView />;
+      case 'blog': return <BlogView />;
+      case 'contacto': return <ContactoView />;
+      default: return <InicioView showHint={showHint} />;
+    }
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden font-sans text-white select-none" style={{ background: '#060810' }}>
+    <div style={{ background: 'var(--bg)', color: 'var(--text)', fontFamily: "'Outfit', sans-serif", minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Nav activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* Stars */}
-      <Starfield />
+      <main style={{ flex: 1 }}>
+        {renderView()}
+      </main>
 
-      {/* Mesh */}
-      <MeshGraph
-        graphData={initialData}
-        onNodeClick={handleNodeClick}
-        selectedNodeId={selectedNode?.id}
-      />
-
-      {/* Floating header — shown only when no panel */}
-      <div
-        className="absolute top-0 left-0 w-full p-6 md:p-10 pointer-events-none z-10 transition-opacity duration-500"
-        style={{ opacity: selectedNode ? 0 : 1 }}
-      >
-        <div className="max-w-2xl">
-          <h1
-            className="text-5xl md:text-6xl font-black tracking-tight mb-0"
-            style={{
-              background: 'linear-gradient(135deg, #fff 30%, #a78bfa 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
-            AlterMundi
-          </h1>
-        </div>
-      </div>
-
-      {/* Minimal brand when panel is open */}
-      {selectedNode && (
-        <div className="absolute top-4 left-6 z-20 pointer-events-none">
-          <span
-            className="text-lg font-black tracking-tight"
-            style={{
-              background: 'linear-gradient(135deg, #fff 30%, #a78bfa 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
-            AlterMundi
-          </span>
-        </div>
-      )}
-
-      {/* Legend */}
-      <CategoryLegend />
-
-      {/* Hint */}
-      {!selectedNode && <HintBadge visible={showHint} />}
-
-      {/* Detail panel */}
-      <DetailPanel node={selectedNode} onClose={() => setSelectedNode(null)} />
+      <footer style={{ padding: '2rem 1.5rem', textAlign: 'center', borderTop: '1px solid rgba(91,75,168,0.1)', background: 'var(--bg)' }}>
+        <p style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.75rem', color: 'rgba(26,26,46,0.4)' }}>
+          © 2026 AlterMundi · Software Libre · Φ · Otro mundo es posible
+        </p>
+      </footer>
     </div>
   );
 }

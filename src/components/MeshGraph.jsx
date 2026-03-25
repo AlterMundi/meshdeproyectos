@@ -1,16 +1,26 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 
-export default function MeshGraph({ graphData, onNodeClick, selectedNodeId }) {
+export default function MeshGraph({ graphData, onNodeClick, selectedNodeId, heroMode = false }) {
     const fgRef = useRef();
+    const containerRef = useRef();
     const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
     const [hoveredNodeId, setHoveredNodeId] = useState(null);
 
     useEffect(() => {
-        const handleResize = () => setDimensions({ width: window.innerWidth, height: window.innerHeight });
+        const updateDimensions = () => {
+            if (heroMode && containerRef.current) {
+                const rect = containerRef.current.getBoundingClientRect();
+                setDimensions({ width: rect.width, height: rect.height });
+            } else {
+                setDimensions({ width: window.innerWidth, height: window.innerHeight });
+            }
+        };
+        updateDimensions();
+        const handleResize = () => updateDimensions();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    }, [heroMode]);
 
     // Tune forces after graph mounts — no d3 import needed, use fg.d3Force()
     const handleEngineStop = useCallback(() => {
@@ -141,8 +151,13 @@ export default function MeshGraph({ graphData, onNodeClick, selectedNodeId }) {
 
     return (
         <div
+            ref={containerRef}
             className="absolute inset-0 z-0"
-            style={{ background: 'radial-gradient(ellipse 120% 80% at 50% 40%, #0a0d1a 0%, #050709 100%)' }}
+            style={{
+                background: heroMode
+                    ? 'radial-gradient(ellipse 120% 80% at 50% 40%, #06080f 0%, #020305 100%)'
+                    : 'radial-gradient(ellipse 120% 80% at 50% 40%, #0a0d1a 0%, #050709 100%)'
+            }}
         >
             <ForceGraph2D
                 ref={handleRef}
@@ -166,12 +181,14 @@ export default function MeshGraph({ graphData, onNodeClick, selectedNodeId }) {
                     highlightLinks.has(link) ? '#fff' : 'rgba(255,255,255,0.18)'
                 }
                 onNodeClick={node => {
+                    if (heroMode) return;
                     fgRef.current?.centerAt(node.x, node.y, 800);
                     fgRef.current?.zoom(selectedNodeId === node.id ? 1.5 : 2.2, 800);
                     onNodeClick(node);
                 }}
-                onNodeHover={node => setHoveredNodeId(node?.id ?? null)}
+                onNodeHover={node => heroMode ? null : setHoveredNodeId(node?.id ?? null)}
                 onBackgroundClick={() => {
+                    if (heroMode) return;
                     onNodeClick(null);
                     fgRef.current?.zoom(1.2, 600);
                 }}
